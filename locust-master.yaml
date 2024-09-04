@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-master
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust-master
+  template:
+    metadata:
+      labels:
+        app: locust-master
+    spec:
+      containers:
+      - name: locust-master
+        image: locustio/locust
+        args:
+          - "--master"
+        ports:
+        - containerPort: 8089 # Locust Web UI 포트
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: locust-master
+  namespace: monitoring
+spec:
+  ports:
+  - port: 8089
+    targetPort: 8089
+  selector:
+    app: locust-master
+  type: LoadBalancer
+
+
